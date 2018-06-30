@@ -201,6 +201,7 @@ public class MainActivity extends Activity {
             }
 
         });
+        mWorkerThread.start();
 
     }
 

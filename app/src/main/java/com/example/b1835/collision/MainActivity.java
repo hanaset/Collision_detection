@@ -20,6 +20,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextClock;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -50,8 +52,8 @@ public class MainActivity extends Activity {
     byte[] readBuffer;
     int readBufferPosition;
 
-    EditText mEditReceive, mEditSend;
-    Button mButtonSend;
+    TextView state_text;
+    Button hospital_btn;
 
 
     @Override
@@ -59,10 +61,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mEditReceive = (EditText)findViewById(R.id.receiveString);
-        mEditSend = (EditText)findViewById(R.id.sendString);
-        mButtonSend = (Button)findViewById(R.id.sendButton);
+        state_text = (TextView)findViewById(R.id.Main_text);
+        hospital_btn = (Button)findViewById(R.id.Main_hospital_btn);
 
+        /* // 데이터 보내는 부분
         mButtonSend.setOnClickListener(new OnClickListener(){
 
             @Override
@@ -72,9 +74,18 @@ public class MainActivity extends Activity {
                 mEditSend.setText("");
             }
         });
+        */
 
         // 블루투스 활성화 시키는 메소드
         checkBluetooth();
+
+        hospital_btn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, HospitalActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     // 블루투스 장치의 이름이 주어졌을때 해당 블루투스 장치 객체를 페어링 된 장치 목록에서 찾아내는 코드.
@@ -132,14 +143,13 @@ public class MainActivity extends Activity {
             mOutputStream = mSocket.getOutputStream();
             mInputStream = mSocket.getInputStream();
 
-            // 데이터 수신 준비.
-            mEditReceive.setText("준비완료");
+            // 데이터 수신 준비
             beginListenForData();
 
         }catch(Exception e) { // 블루투스 연결 중 오류 발생
             Toast.makeText(getApplicationContext(),
                     "블루투스 연결 중 오류가 발생했습니다.", Toast.LENGTH_LONG).show();
-            finish();  // App 종료
+            finish();
         }
     }
 
@@ -182,7 +192,8 @@ public class MainActivity extends Activity {
                                         @Override
                                         public void run() {
                                             // mStrDelimiter = '\n';
-                                            mEditReceive.setText(mEditReceive.getText().toString() + data+ mStrDelimiter);
+                                            //mEditReceive.setText(mEditReceive.getText().toString() + data+ mStrDelimiter);
+                                            //////////////////////////////////////////////////////////////////////////////// 데이터 수신 부분
                                         }
 
                                     });
@@ -265,7 +276,8 @@ public class MainActivity extends Activity {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(mBluetoothAdapter == null ) {  // 블루투스 미지원
             Toast.makeText(getApplicationContext(), "기기가 블루투스를 지원하지 않습니다.", Toast.LENGTH_LONG).show();
-            finish();  // 앱종료
+            state_text.setText("블루투스 연결 안됨");
+           // finish();  // 앱종료
         }
         else { // 블루투스 지원
             /** isEnable() : 블루투스 모듈이 활성화 되었는지 확인.
@@ -285,6 +297,8 @@ public class MainActivity extends Activity {
             }
             else // 블루투스 지원하며 활성 상태인 경우.
                 selectDevice();
+
+            state_text.setText("블루투스 연결 완료");
         }
     }
 

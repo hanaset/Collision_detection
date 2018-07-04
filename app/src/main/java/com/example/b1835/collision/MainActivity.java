@@ -77,7 +77,7 @@ public class MainActivity extends Activity {
         */
 
         // 블루투스 활성화 시키는 메소드
-        checkBluetooth();
+      //  checkBluetooth();
 
         hospital_btn.setOnClickListener(new OnClickListener() {
             @Override
